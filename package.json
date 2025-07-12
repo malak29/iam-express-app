@@ -4,6 +4,9 @@
   "description": "Its a basic IAM app with register, login, authenticate and rbac authorization",
   "main": "index.js",
   "scripts": {
+    "dev": "nodemon",
+    "build": "tsc",
+    "start": "node dist/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
@@ -11,5 +14,11 @@
   "dependencies": {
     "dotenv": "^17.2.0",
     "express": "^5.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.13",
+    "nodemon": "^3.1.10",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.3"
   }
 }
