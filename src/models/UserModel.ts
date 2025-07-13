@@ -1,6 +1,6 @@
 import path from 'path';
-import { toRecord } from './User';
-import { Result, User, fromRecord } from '../types/UserTypes';
+import { User, fromRecord, toRecord } from './User';
+import { Result } from '../types/UserTypes';
 import { readJSON, writeJSON } from '../utility/FileUtility';
 
 const dbPath = path.resolve(__dirname, '../../db/users.json');

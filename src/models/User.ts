@@ -1,72 +1,70 @@
+
 import bcrypt from 'bcrypt';
-import { EDepartmentType, EUserType, User } from '../types/UserTypes';
+import { EUserType, EDepartmentType, EUserStatus } from '../types/UserTypes';
 
-export async function createUser(
-    id: string,
-    name: string,
-    email: string,
-    plainPassword: string,
-    userType: EUserType = EUserType.General,
-    department: EDepartmentType = EDepartmentType.General
-): Promise<User> {
-    const saltRounds = 10;
-    const hashedPassword = await bcrypt.hash(plainPassword, saltRounds);
+// Core user type used throughout the app
+export type User = {
+  id: string;
+  name: string;
+  email: string;
+  hashedPassword: string;
+  userType: EUserType;
+  department: EDepartmentType;
+  status: EUserStatus;
+};
 
-    return {
-        id,
-        name,
-        email,
-        hashedPassword,
-        userType,
-        department,
-    };
+// Input for creating a user (raw password)
+export type NewUserInput = {
+  id: string;
+  name: string;
+  email: string;
+  password: string; // plain text password
+  userType: EUserType;
+  department: EDepartmentType;
+  status?: EUserStatus; // optional, default to Active
+};
+
+// Factory function: creates a user with hashed password
+export async function createUser(input: NewUserInput): Promise<User> {
+  const saltRounds = 10;
+  const hashedPassword = await bcrypt.hash(input.password, saltRounds);
+
+  return {
+    id: input.id,
+    name: input.name,
+    email: input.email,
+    hashedPassword,
+    userType: input.userType,
+    department: input.department,
+    status: input.status ?? EUserStatus.Active,
+  };
 }
 
-export function getId(user: User): string {
-    return user.id;
+// Password validator for login or auth flows
+export async function validatePassword(user: User, inputPassword: string): Promise<boolean> {
+  return bcrypt.compare(inputPassword, user.hashedPassword);
 }
 
-export function getName(user: User): string {
-    return user.name;
+// Used to return user object safely to client (without password)
+export function toSafeUser(user: User): Omit<User, 'hashedPassword'> {
+  const { hashedPassword, ...rest } = user;
+  return rest;
 }
 
-export function setName(user: User, name: string): User {
-    return { ...user, name };
+// Parse raw data (from JSON/file/db) into a valid User object
+export function fromRecord(record: any): User {
+  return {
+    id: record.id,
+    name: record.name,
+    email: record.email,
+    hashedPassword: record.hashedPassword,
+    userType: record.userType,
+    department: record.department,
+    status: record.status ?? EUserStatus.Active, // backward-compatible default
+  };
 }
 
-export function getEmail(user: User): string {
-    return user.email;
-}
-
-export function setEmail(user: User, email: string): User {
-    return { ...user, email };
-}
-
-export async function validatePassword(user: User, plainPassword: string): Promise<boolean> {
-    return await bcrypt.compare(plainPassword, user.hashedPassword);
-}
-
-export function getUserType(user: User): EUserType {
-    return user.userType;
-}
-
-export function setUserType(user: User, userType: EUserType): User {
-    return { ...user, userType };
-}
-
-export function getDepartment(user: User): EDepartmentType {
-    return user.department;
-}
-
-export function setDepartment(user: User, department: EDepartmentType): User {
-    return { ...user, department };
-}
-
-export function toJSONNoPass(user: User): object {
-    const { hashedPassword, ...rest } = user;
-    return rest;
-}
-
+// Convert a User to a plain object (for file or DB storage)
 export function toRecord(user: User): object {
-    return { ...user };
+  return { ...user };
 }
