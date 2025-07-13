@@ -1,5 +1,5 @@
 import { promises as fs } from 'fs';
-import { Result } from '../models/UserTypes';
+import { Result } from '../types/UserTypes';
 
 export async function readJSON<T>(filePath: string): Promise<Result<T>> {
   try {

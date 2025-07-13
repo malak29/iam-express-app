@@ -1,14 +1,5 @@
 import bcrypt from 'bcrypt';
-import { EDepartmentType, EUserType } from './UserTypes';
-
-export interface User {
-    id: string;
-    name: string;
-    email: string;
-    hashedPassword: string;
-    userType: EUserType;
-    department: EDepartmentType;
-}
+import { EDepartmentType, EUserType, User } from '../types/UserTypes';
 
 export async function createUser(
     id: string,
