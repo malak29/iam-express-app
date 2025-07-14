@@ -1,4 +1,4 @@
-import { EUserActions, INewUserInput, IUser } from "../types/UserTypes";
+import { EUserActions, EUserStatus, INewUserInput, IUser } from "../types/UserTypes";
 import * as UserModel from '../models/UserModel'
 import * as UserFactory from '../models/User'
 import { canPerformAction } from "./PermissionService";
@@ -64,5 +64,28 @@ export async function deleteUser (requestor: IUser, targetUser: IUser): Promise<
         await UserModel.deleteUserById(targetUser.id)
     } catch (error: any) {
         throw new Error(`${FILENAME}: Failed to delete user: ${error instanceof Error ? error.message : String(error)}`)
+    }
+}
+
+export async function changeUserStatus(requestor: IUser, targetUserId: string, newStatus: EUserStatus): Promise<void> {
+    try {
+        // Get target user
+        const targetUser = await getUserById(requestor, targetUserId)
+
+        // Check permission
+        const isAllowed = canPerformAction(requestor, CHANGE_STATUS, targetUser, newStatus)
+        if (!isAllowed) {
+            throw new Error(`${FILENAME}: User ${requestor.id} does not have permission to change status`)
+        }
+
+        // Update status and save
+        const updatedUser: IUser = {
+            ...targetUser,
+            status: newStatus
+        }
+
+        await updateUser(requestor, updatedUser)
+    } catch (error: any) {
+        throw new Error(`${FILENAME}: Failed to change status: ${error instanceof Error ? error.message : String(error)}`)
     }
 }
