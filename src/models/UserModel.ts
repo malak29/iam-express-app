@@ -1,79 +1,84 @@
-import path from 'path';
-import { User, fromRecord, toRecord } from './User';
-import { Result } from '../types/UserTypes';
-import { readJSON, writeJSON } from '../utility/FileUtility';
+import path from 'path'
+import { fromRecord, toRecord } from './User'
+import { readJSON, writeJSON } from '../utility/FileUtility'
+import { IUser } from '../types/UserTypes'
 
-const dbPath = path.resolve(__dirname, '../../db/users.json');
+const dbPath = path.resolve(__dirname, '../../db/users.json')
+const FILENAME = 'UserModel.ts'
 
-export async function getAllUsers(): Promise<Result<User[]>> {
-    const result = await readJSON<User[]>(dbPath);
-    if (!result.ok) return result;
-
-    const users = result.data.map(fromRecord);
-    return { ok: true, data: users };
-}
-
-export async function getUserByEmail(email: string): Promise<Result<User>> {
-    const all = await getAllUsers();
-    if (!all.ok) return all;
-
-    const found = all.data.find((u) => u.email === email);
-    if (!found) return { ok: false, error: new Error('User not found') };
-
-    return { ok: true, data: found };
-}
-
-export async function getUserById(id: string): Promise<Result<User>> {
-    const all = await getAllUsers();
-    if (!all.ok) return all;
-
-    const found = all.data.find((u) => u.id === id);
-    if (!found) return { ok: false, error: new Error('User not found') };
-
-    return { ok: true, data: found };
-}
-
-export async function addUser(user: User): Promise<Result<User>> {
-    const all = await getAllUsers();
-    if (!all.ok) return all;
-
-    const exists = all.data.find((u) => u.email === user.email);
-    if (exists) return { ok: false, error: new Error('User already exists') };
-
-    const updated = [...all.data, user];
-    const write = await writeJSON(dbPath, updated.map(toRecord));
-    if (!write.ok) return { ok: false, error: write.error };
-
-    return { ok: true, data: user };
-}
-
-export async function updateUser(user: User): Promise<Result<User>> {
-    const all = await getAllUsers();
-    if (!all.ok) return all;
-
-    const index = all.data.findIndex((u) => u.id === user.id);
-    if (index === -1) return { ok: false, error: new Error('User not found') };
-
-    const updatedUsers = [...all.data];
-    updatedUsers[index] = user;
-
-    const write = await writeJSON(dbPath, updatedUsers.map(toRecord));
-    if (!write.ok) return { ok: false, error: write.error };
-
-    return { ok: true, data: user };
-}
-
-export async function deleteUserById(id: string): Promise<Result<null>> {
-    const all = await getAllUsers();
-    if (!all.ok) return { ok: false, error: all.error };
-
-    const filtered = all.data.filter((u) => u.id !== id);
-    if (filtered.length === all.data.length) {
-        return { ok: false, error: new Error('User not found') };
+export async function getAllUsers(): Promise<IUser[]> {
+    try {
+        const result = await readJSON<IUser[]>(dbPath)
+        return result.map(fromRecord)
+    } catch (error: any) {
+        throw new Error(`${FILENAME}: Failed to read users from ${dbPath}: ${error instanceof Error ? error.message : String(error)}`)
     }
+}
 
-    const write = await writeJSON(dbPath, filtered.map(toRecord));
-    if (!write.ok) return { ok: false, error: write.error };
+export async function getUserByEmail(email: string): Promise<IUser> {
+    try {
+        const users = await getAllUsers()
+        const user = users.find((user) => user.email === email)
+        if (!user) {
+            throw new Error(`${FILENAME}: User not found with email ${email}`)
+        }
+        return user
+    } catch (error: any) {
+        throw new Error(`${FILENAME}: Failed to get user by email: ${error instanceof Error ? error.message : String(error)}`)
+    }
+}
 
-    return { ok: true, data: null };
+export async function getUserById(id: string): Promise<IUser> {
+    try {
+        const users = await getAllUsers()
+        const user = users.find((user) => user.id === id)
+        if (!user) {
+            throw new Error(`${FILENAME}: User not found with id ${id}`)
+        }
+        return user
+    } catch (error: any) {
+        throw new Error(`${FILENAME}: Failed to get user by id: ${error instanceof Error ? error.message : String(error)}`)
+    }
+}
+
+export async function addUser(user: IUser): Promise<void> {
+    try {
+        const users = await getAllUsers()
+        const userCheck = users.find((u) => u.email === user.email)
+        if (userCheck) {
+            throw new Error(`${FILENAME}: User already exists with email ${user.email}`)
+        }
+        const updatedUsers = [...users, user]
+        await writeJSON(dbPath, updatedUsers.map(toRecord))
+    } catch (error: any) {
+        throw new Error(`${FILENAME}: Failed to add user: ${error instanceof Error ? error.message : String(error)}`)
+    }
+}
+
+export async function updateUser(user: IUser): Promise<void> {
+    try {
+        const users = await getAllUsers()
+        const userIndex = users.findIndex((u) => u.email === user.email)
+        if (userIndex === -1) {
+            throw new Error(`${FILENAME}: User does not exist with email ${user.email}`)
+        }
+        users[userIndex] = user
+        await writeJSON(dbPath, users.map(toRecord))
+    } catch (error: any) {
+        throw new Error(`${FILENAME}: Failed to update user: ${error instanceof Error ? error.message : String(error)}`)
+    }
+}
+
+export async function deleteUserById(id: string): Promise<void> {
+    try {
+        const users = await getAllUsers()
+        const userIndex = users.findIndex((user) => user.id === id)
+        if (userIndex === -1) {
+            throw new Error(`${FILENAME}: User not found with id ${id}`)
+        }
+        users.splice(userIndex, 1)
+        await writeJSON(dbPath, users.map(toRecord))
+    } catch (error: any) {
+        throw new Error(`${FILENAME}: Failed to delete user by id: ${error instanceof Error ? error.message : String(error)}`)
+    }
 }

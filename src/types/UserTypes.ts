@@ -1,28 +1,41 @@
 // User roles in the system
 export enum EUserType {
-    General = 'General',
-    DepartmentHead = 'DepartmentHead',
-    Admin = 'Admin',
+    GENERAL = 'GENERAL',
+    DEPARTMENT_HEAD = 'DEPARTMENT_HEAD',
+    ADMIN = 'ADMIN',
   }
   
   // Organizational departments
   export enum EDepartmentType {
-    General = 'General',
-    HR = 'HR',
-    Sales = 'Sales',
-    IT = 'IT',
-    Marketing = 'Marketing',
-    Finance = 'Finance',
+    DEPARTMENT1 = 'DEPARTMENT1',
+    DEPARTMENT2 = 'DEPARTMENT2',
+    DEPARTMENT3 = 'DEPARTMENT3',
+    DEPARTMENT4 = 'DEPARTMENT4'
   }
   
   // Account status
   export enum EUserStatus {
-    Active = 'active',
-    Inactive = 'inactive',
+    ACTIVE = 'ACTIVE',
+    INACTIVE = 'INACTIVE',
   }
   
-  // Generic result wrapper for safe error handling
-  export type Result<T> =
-    | { ok: true; data: T }
-    | { ok: false; error: Error };
-  
+export type IUser = {
+    id: string
+    name: string
+    email: string
+    hashedPassword: string
+    userType: EUserType
+    department: EDepartmentType
+    status: EUserStatus
+}
+
+// Input for creating a user (raw password)
+export type INewUserInput = {
+    id: string
+    name: string
+    email: string
+    password: string // plain text password
+    userType: EUserType
+    department: EDepartmentType
+    status: EUserStatus
+}

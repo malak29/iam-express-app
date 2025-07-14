@@ -1,22 +1,21 @@
-import { promises as fs } from 'fs';
-import { Result } from '../types/UserTypes';
+import { promises as fs } from 'fs'
 
-export async function readJSON<T>(filePath: string): Promise<Result<T>> {
+const FILENAME = "FileUtility.ts"
+
+export async function readJSON<T>(filePath: string): Promise<T> {
   try {
-    const data = await fs.readFile(filePath, 'utf-8');
-    const parsed = JSON.parse(data) as T;
-    return { ok: true, data: parsed };
-  } catch (error) {
-    return { ok: false, error: error instanceof Error ? error : new Error('Unknown read error') };
+    const data = await fs.readFile(filePath, 'utf-8')
+    return JSON.parse(data) as T
+  } catch (error: any) {
+    throw new Error(`${FILENAME}: Failed to read or parse JSON from ${filePath}: ${error instanceof Error ? error.message : String(error)}`)
   }
 }
 
-export async function writeJSON<T>(filePath: string, data: T): Promise<Result<T>> {
+export async function writeJSON<T>(filePath: string, data: T): Promise<void> {
   try {
-    const jsonData = JSON.stringify(data, null, 2);
-    await fs.writeFile(filePath, jsonData, 'utf-8');
-    return { ok: true, data };
-  } catch (error) {
-    return { ok: false, error: error instanceof Error ? error : new Error('Unknown write error') };
+    const jsonData = JSON.stringify(data, null, 2)
+    await fs.writeFile(filePath, jsonData, 'utf-8')
+  } catch (error: any) {
+    throw new Error(`${FILENAME}: Failed to write JSON to ${filePath}: ${error instanceof Error ? error.message : String(error)}`)
   }
 }
