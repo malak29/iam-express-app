@@ -1,14 +1,12 @@
 import { permissionsConfig } from "../config/permissionConfig";
-import { User } from "../models/User";
-import { EUserStatus } from "../types/UserTypes";
+import { EUserActions, EUserStatus, IUser } from "../types/UserTypes";
 
-
-type Action = 'create' | 'read' | 'update' | 'delete' | 'changeStatus';
+const { CREATE, READ, UPDATE, DELETE, CHANGE_STATUS } = EUserActions
 
 export function canPerformAction(
-  actor: User,
-  action: Action,
-  targetUser?: User,
+  actor: IUser,
+  action: EUserActions,
+  targetUser?: IUser,
   newStatus?: EUserStatus
 ): boolean {
   const actorRole = actor.userType;
@@ -49,8 +47,8 @@ export function canPerformAction(
       }
     }
 
-    // Check allowedStatusChanges if action is 'changeStatus'
-    if (action === 'changeStatus' && rule.allowedStatusChanges) {
+    // Check allowedStatusChanges if action is 'CHANGE_STATUS'
+    if (action === CHANGE_STATUS && rule.allowedStatusChanges) {
       if (!targetUser || !newStatus) continue;
 
       const currentStatus = targetUser.status;

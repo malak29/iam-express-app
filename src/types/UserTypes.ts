@@ -39,3 +39,11 @@ export type INewUserInput = {
     department: EDepartmentType
     status: EUserStatus
 }
+
+export enum EUserActions {
+    CREATE = 'CREATE',
+    READ = 'READ',
+    UPDATE = 'UPDATE',
+    DELETE = 'DELETE',
+    CHANGE_STATUS = 'CHANGE_STATUS',
+}
