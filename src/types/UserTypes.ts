@@ -39,7 +39,6 @@ export type INewUserInput = {
     department: EDepartmentType
     status: EUserStatus
 }
-
 export enum EUserActions {
     CREATE = 'CREATE',
     READ = 'READ',
