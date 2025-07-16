@@ -47,5 +47,6 @@ export const SUCCESS_MESSAGES = {
     USER_CREATED: 'User created successfully',
     USER_UPDATED: 'User updated successfully',
     USER_DELETED: 'User deleted successfully',
-    STATUS_CHANGED: 'User status changed successfully'  
+    STATUS_CHANGED: 'User status changed successfully'  ,
+    LOGIN_SUCCESS: 'User logged in successfully'  
 } as const

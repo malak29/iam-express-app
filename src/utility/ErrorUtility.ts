@@ -1,3 +1,5 @@
+import { ErrorType } from "../types/ErrorTypes"
+
 export function isNotFoundError(error: Error): boolean {
     return (
         error.message.includes('not found') ||
@@ -29,34 +31,28 @@ export function isNotImplementedError(error: Error): boolean {
 
 // Extract specific error details
 export function extractErrorContext(error: Error): {
-    type:
-        | 'NOT_FOUND'
-        | 'ALREADY_EXISTS'
-        | 'PERMISSION'
-        | 'INVALID_STATUS'
-        | 'NOT_IMPLEMENTED'
-        | 'UNKNOWN'
+    type: ErrorType
     message: string
-} {
+  } {
     if (isNotFoundError(error)) {
-        return { type: 'NOT_FOUND', message: error.message }
+      return { type: ErrorType.NOT_FOUND, message: error.message }
     }
-
+  
     if (isAlreadyExistsError(error)) {
-        return { type: 'ALREADY_EXISTS', message: error.message }
+      return { type: ErrorType.ALREADY_EXISTS, message: error.message }
     }
-
+  
     if (isPermissionError(error)) {
-        return { type: 'PERMISSION', message: error.message }
+      return { type: ErrorType.PERMISSION, message: error.message }
     }
-
+  
     if (isInvalidStatusChangeError(error)) {
-        return { type: 'INVALID_STATUS', message: error.message }
+      return { type: ErrorType.INVALID_STATUS, message: error.message }
     }
-
+  
     if (isNotImplementedError(error)) {
-        return { type: 'NOT_IMPLEMENTED', message: error.message }
+      return { type: ErrorType.NOT_IMPLEMENTED, message: error.message }
     }
-
-    return { type: 'UNKNOWN', message: error.message }
+  
+    return { type: ErrorType.UNKNOWN, message: error.message }
 }
