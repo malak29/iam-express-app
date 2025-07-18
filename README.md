@@ -3,7 +3,7 @@
 A comprehensive REST API for user management with role-based authentication and authorization, built with Node.js, TypeScript, and Express.
 
 # Architecture Diagram
-[![Architecture Diagram]](https://github.com/malak29/iam-express-app/blob/master/out/plantuml/Architecture_diagram/Architecture_diagram.png?raw=true)
+![Architecture Diagram](https://github.com/malak29/iam-express-app/blob/master/out/plantuml/Architecture_diagram/Architecture_diagram.png?raw=true)
 
 ## 🚀 Features
 
