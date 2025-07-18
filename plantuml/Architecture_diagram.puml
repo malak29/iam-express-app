@@ -1,0 +1,75 @@
+@startuml
+title IAM Express API - System Architecture
+
+' Client Layer
+package "Client Layer" {
+    [Web Browser] as browser
+    [Mobile App] as mobile
+    [API Tools] as postman
+}
+
+' API Gateway
+package "API Gateway" {
+    [Express Server] as express
+    [JWT Middleware] as jwt
+    [Auth Middleware] as authz
+    [Validation] as validation
+}
+
+' Business Logic
+package "Business Logic" {
+    [AuthController] as authctrl
+    [UserController] as userctrl
+    [AuthService] as authsvc
+    [UserService] as usersvc
+    [PermissionService] as permsvc
+}
+
+' Data Layer
+package "Data Layer" {
+    [UserModel] as usermodel
+    database "JSON Database" as jsondb
+}
+
+' RBAC System
+package "RBAC System" {
+    [ADMIN] as admin
+    [DEPARTMENT_HEAD] as depthead
+    [GENERAL] as general
+}
+
+' Docker
+package "Docker" {
+    [Container] as container
+    [Dev Environment] as devenv
+    [Prod Environment] as prodenv
+}
+
+' Connections
+browser --> express
+mobile --> express
+postman --> express
+
+express --> jwt
+express --> validation
+jwt --> authz
+authz --> permsvc
+
+express --> authctrl
+express --> userctrl
+
+authctrl --> authsvc
+userctrl --> usersvc
+
+authsvc --> usermodel
+usersvc --> usermodel
+usermodel --> jsondb
+
+permsvc --> admin
+permsvc --> depthead
+permsvc --> general
+
+container --> express
+devenv --> container
+prodenv --> container
+@enduml
