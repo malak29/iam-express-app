@@ -1,6 +1,8 @@
 import { Response } from 'express'
 import { APIResponse, HTTP_STATUS_CODES } from '../types/ResponseTypes'
 
+const FILENAME = 'ResponseUtility.ts'
+
 export const sendSuccess = <T>(
     res: Response,
     message: string,
@@ -19,6 +21,7 @@ export function sendError(
     res: Response,
     message: string,
     statusCode: number = HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
+    filename: string,
     errors?: any[]
 ): void {
     const response: APIResponse = {
@@ -26,6 +29,7 @@ export function sendError(
         message,
         ...(errors && { errors }),
     }
+    console.error(`Error in ${filename}:`, message)
     res.status(statusCode).json(response)
 }
 
@@ -42,7 +46,7 @@ export function sendNotFound(
     res: Response,
     message: string = 'Resource not found'
 ): void {
-    sendError(res, message, HTTP_STATUS_CODES.NOT_FOUND)
+    sendError(res, message, HTTP_STATUS_CODES.NOT_FOUND, FILENAME)
 }
 
 // Forbidden response helper
@@ -50,7 +54,7 @@ export function sendForbidden(
     res: Response,
     message: string = 'Insufficient permissions'
 ): void {
-    sendError(res, message, HTTP_STATUS_CODES.FORBIDDEN)
+    sendError(res, message, HTTP_STATUS_CODES.FORBIDDEN, FILENAME)
 }
 
 // Conflict response helper
@@ -58,7 +62,7 @@ export function sendConflict(
     res: Response,
     message: string = 'Resource already exists'
 ): void {
-    sendError(res, message, HTTP_STATUS_CODES.CONFLICT)
+    sendError(res, message, HTTP_STATUS_CODES.CONFLICT, FILENAME)
 }
 
 // Unprocessable entity response helper
@@ -66,5 +70,5 @@ export function sendUnprocessable(
     res: Response,
     message: string = 'Unprocessable entity'
 ): void {
-    sendError(res, message, HTTP_STATUS_CODES.UNPROCESSABLE_ENTITY)
+    sendError(res, message, HTTP_STATUS_CODES.UNPROCESSABLE_ENTITY, FILENAME)
 }

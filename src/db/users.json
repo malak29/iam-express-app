@@ -1,1 +1,20 @@
-[]
+[
+  {
+    "id": "admin-001",
+    "name": "System Administrator",
+    "email": "admin@example.com",
+    "hashedPassword": "$2b$10$5gJnNCcwy0BQSHldH3iESu97FGg0S9Pn2ZR7sUMXYqjd/TtLfEvNq",
+    "userType": "ADMIN",
+    "department": "DEPARTMENT1",
+    "status": "ACTIVE"
+  },
+  {
+    "id": "user-001",
+    "name": "John Doe",
+    "email": "john.doe@example.com",
+    "hashedPassword": "$2b$10$kk11jLDSFpJ6c43xSHmBTeDtpCWsVeLL7Iotc0NYzcVrjM96/sUEe",
+    "userType": "GENERAL",
+    "department": "DEPARTMENT1",
+    "status": "ACTIVE"
+  }
+]

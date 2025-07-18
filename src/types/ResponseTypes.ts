@@ -40,7 +40,10 @@ export const ERROR_MESSAGES = {
     VALIDATION_FAILED: 'Validation failed',
     NOT_IMPLEMENTED: 'Feature not implemented yet',
     UNAUTHORIZED: 'Authentication required',
-    INTERNAL_ERROR: 'Internal server error'
+    INTERNAL_ERROR: 'Internal server error',
+    NO_HEADER: 'No Auth header Provided',
+    NO_TOKEN: 'No token Provided',
+    TOKEN_FAILURE: 'Failed to get user from token',
 } as const
 
 export const SUCCESS_MESSAGES = {

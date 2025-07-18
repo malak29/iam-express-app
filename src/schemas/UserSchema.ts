@@ -1,15 +1,21 @@
 import { z } from 'zod'
 import { EUserType, EDepartmentType, EUserStatus } from '../types/UserTypes'
 
+function enumToZodEnum<T extends Record<string, string>>(enumObject: T) {
+    return z.enum(Object.values(enumObject) as [string, ...string[]])
+}
+export const UserTypeSchema = enumToZodEnum(EUserType)
+export const DepartmentSchema = enumToZodEnum(EDepartmentType)
+export const UserStatusSchema = enumToZodEnum(EUserStatus)
 // Schema for creating a new user
 export const createUserSchema = z.object({
     id: z.string().min(1, 'ID is required'),
     name: z.string().min(1, 'Name is required').max(100, 'Name too long'),
     email: z.email('Invalid email format'),
     password: z.string().min(6, 'Password must be at least 6 characters'),
-    userType: z.enum(EUserType),
-    department: z.enum(EDepartmentType),
-    status: z.enum(EUserStatus),
+    userType: UserTypeSchema,
+    department: DepartmentSchema, 
+    status: UserStatusSchema,  
 })
 
 // Schema for updating a user (all fields optional except id)

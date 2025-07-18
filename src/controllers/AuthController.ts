@@ -2,6 +2,7 @@ import { Request, Response } from 'express'
 import { validateBody } from '../utility/ValidationUtility'
 import * as AuthService from '../services/AuthService'
 import { toSafeUser } from '../models/User'
+import { IUser } from '../types/UserTypes'
 import {
     sendSuccess,
     sendError,
@@ -15,11 +16,20 @@ import { extractErrorContext } from '../utility/ErrorUtility'
 import { changePasswordSchema, loginSchema } from '../schemas/AuthSchema'
 import { ErrorType } from '../types/ErrorTypes'
 
+const FILENAME = 'AuthController.ts'
+
+// Custom interface for authenticated requests
+interface AuthenticatedRequest extends Request {
+    user?: IUser
+}
+
+// POST /auth/login - User login
 export async function login(req: Request, res: Response): Promise<void> {
     try {
         const credentials = validateBody(loginSchema, req.body)
         const { token, user } = await AuthService.login(credentials)
-        sendSuccess(res, SUCCESS_MESSAGES.LOGIN_SUCCESS, HTTP_STATUS_CODES.OK, {
+        
+        sendSuccess(res, 'Login successful', HTTP_STATUS_CODES.OK, {
             token,
             user: toSafeUser(user),
         })
@@ -29,7 +39,8 @@ export async function login(req: Request, res: Response): Promise<void> {
             return sendError(
                 res,
                 'Invalid email or password',
-                HTTP_STATUS_CODES.UNAUTHORIZED
+                HTTP_STATUS_CODES.UNAUTHORIZED,
+                FILENAME
             )
         }
 
@@ -37,7 +48,8 @@ export async function login(req: Request, res: Response): Promise<void> {
             return sendError(
                 res,
                 'Invalid email or password',
-                HTTP_STATUS_CODES.UNAUTHORIZED
+                HTTP_STATUS_CODES.UNAUTHORIZED,
+                FILENAME
             )
         }
 
@@ -45,7 +57,8 @@ export async function login(req: Request, res: Response): Promise<void> {
             return sendError(
                 res,
                 'Account is inactive. Please contact administrator.',
-                HTTP_STATUS_CODES.FORBIDDEN
+                HTTP_STATUS_CODES.FORBIDDEN,
+                FILENAME
             )
         }
 
@@ -68,17 +81,18 @@ export async function logout(req: Request, res: Response): Promise<void> {
 
 // GET /auth/me - Get current user info
 export async function getCurrentUser(
-    req: Request,
+    req: AuthenticatedRequest,
     res: Response
 ): Promise<void> {
     try {
-        const user = req.user   
+        const user = req.user
 
         if (!user) {
             return sendError(
                 res,
                 ERROR_MESSAGES.UNAUTHORIZED,
-                HTTP_STATUS_CODES.UNAUTHORIZED
+                HTTP_STATUS_CODES.UNAUTHORIZED,
+                FILENAME
             )
         }
 
@@ -94,7 +108,7 @@ export async function getCurrentUser(
 }
 
 // POST /auth/refresh - Refresh token
-export async function refreshToken(req: Request, res: Response): Promise<void> {
+export async function refreshToken(req: AuthenticatedRequest, res: Response): Promise<void> {
     try {
         // Extract current token
         const authHeader = req.headers.authorization
@@ -103,7 +117,8 @@ export async function refreshToken(req: Request, res: Response): Promise<void> {
             return sendError(
                 res,
                 ERROR_MESSAGES.UNAUTHORIZED,
-                HTTP_STATUS_CODES.UNAUTHORIZED
+                HTTP_STATUS_CODES.UNAUTHORIZED,
+                FILENAME
             )
         }
 
@@ -113,7 +128,8 @@ export async function refreshToken(req: Request, res: Response): Promise<void> {
             return sendError(
                 res,
                 ERROR_MESSAGES.UNAUTHORIZED,
-                HTTP_STATUS_CODES.UNAUTHORIZED
+                HTTP_STATUS_CODES.UNAUTHORIZED,
+                FILENAME
             )
         }
 
@@ -128,7 +144,8 @@ export async function refreshToken(req: Request, res: Response): Promise<void> {
             return sendError(
                 res,
                 'Invalid or expired token',
-                HTTP_STATUS_CODES.UNAUTHORIZED
+                HTTP_STATUS_CODES.UNAUTHORIZED,
+                FILENAME
             )
         }
 
@@ -138,7 +155,7 @@ export async function refreshToken(req: Request, res: Response): Promise<void> {
 
 // POST /auth/change-password - Change user password (requires auth)
 export async function changePassword(
-    req: Request,
+    req: AuthenticatedRequest,
     res: Response
 ): Promise<void> {
     try {
@@ -148,7 +165,8 @@ export async function changePassword(
             return sendError(
                 res,
                 ERROR_MESSAGES.UNAUTHORIZED,
-                HTTP_STATUS_CODES.UNAUTHORIZED
+                HTTP_STATUS_CODES.UNAUTHORIZED,
+                FILENAME
             )
         }
 
@@ -163,7 +181,8 @@ export async function changePassword(
         sendError(
             res,
             ERROR_MESSAGES.NOT_IMPLEMENTED,
-            HTTP_STATUS_CODES.NOT_IMPLEMENTED
+            HTTP_STATUS_CODES.NOT_IMPLEMENTED,
+            FILENAME
         )
     } catch (error: Error | any) {
         const errorContext = extractErrorContext(error)
@@ -173,13 +192,15 @@ export async function changePassword(
                 return sendError(
                     res,
                     ERROR_MESSAGES.NOT_IMPLEMENTED,
-                    HTTP_STATUS_CODES.NOT_IMPLEMENTED
+                    HTTP_STATUS_CODES.NOT_IMPLEMENTED,
+                    FILENAME
                 )
             case ErrorType.PERMISSION:
                 return sendError(
                     res,
                     ERROR_MESSAGES.INSUFFICIENT_PERMISSIONS,
-                    HTTP_STATUS_CODES.FORBIDDEN
+                    HTTP_STATUS_CODES.FORBIDDEN,
+                    FILENAME
                 )
             default:
                 throw error

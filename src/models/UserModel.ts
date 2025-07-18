@@ -3,7 +3,7 @@ import { fromRecord, toRecord } from './User'
 import { readJSON, writeJSON } from '../utility/FileUtility'
 import { IUser } from '../types/UserTypes'
 
-const dbPath = path.resolve(__dirname, '../../db/users.json')
+const dbPath = path.resolve(__dirname, '../../src/db/users.json')
 const FILENAME = 'UserModel.ts'
 
 export async function getAllUsers(): Promise<IUser[]> {

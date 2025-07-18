@@ -7,12 +7,15 @@
     "dev": "nodemon",
     "build": "tsc",
     "start": "node dist/index.js",
+    "seed": "ts-node src/scripts/SeedScript.ts",
+    "seed:prod": "node dist/scripts/SeedScript.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "bcrypt": "^6.0.0",
+    "cors": "^2.8.5",
     "dotenv": "^17.2.0",
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
@@ -20,6 +23,7 @@
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",
+    "@types/cors": "^2.8.19",
     "@types/express": "^5.0.3",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^24.0.13",
