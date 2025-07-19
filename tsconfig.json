@@ -7,24 +7,33 @@
     "rootDir": "./src",
     "strict": true,
     "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
+    "removeComments": false,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "moduleResolution": "node",
     "baseUrl": "./",
     "paths": {
       "@/*": ["src/*"]
     },
-    "types": ["node", "jest"]
+    "types": ["node"],
+    "typeRoots": ["./node_modules/@types"]
   },
   "include": [
-    "src/**/*",
-    "tests/**/*"
-, "setup.ts"  ],
+    "src/**/*"
+  ],
   "exclude": [
     "node_modules",
-    "dist"
+    "dist",
+    "tests",
+    "**/*.test.ts",
+    "**/*.spec.ts",
+    "jest.config.js"
   ]
 }
